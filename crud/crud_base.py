@@ -2,6 +2,7 @@ from typing import TypeVar, Type, Generic
 from pydantic import BaseModel
 from db.base_class import Base
 from db import db_connection
+from sqlalchemy import select, sql, text
 
 
 ModelType = TypeVar("ModelType", bound=Base)
@@ -34,7 +35,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db_connection.session.query(self.model).filter(self.model.id == id).delete()
         db_connection.session.commit()
 
-    def search(self, parameter: str, collumn_name: str):
-        db_connection.session.query(self.model).filter(
-            f"{collumn_name}" == f"{parameter}"
+
+    def get_by_id(self, id: int) -> ModelType:
+        return (
+            db_connection.session.query(self.model).filter(self.model.id == id).first()
         )

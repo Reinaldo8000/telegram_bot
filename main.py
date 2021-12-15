@@ -1,11 +1,12 @@
 import time
 import telebot
 from core import token
-from crud import crud_user, crud_medicine
+from crud import crud_user, crud_medicine, crud_error
 from models.user import User
 from schemas.medicine import MedicineCreate
 from services import UserService
 import json
+from core.error_handler import StandardError
 
 user_service = UserService()
 bot = telebot.TeleBot(token)
@@ -64,16 +65,12 @@ def create_medicine(message):
 
 @bot.message_handler(commands=["teste"])
 def teste(message):
-    v = True
-    while v:
-        time.sleep(5)
+    error = crud_error.get_erro_by_error_tag("test")
 
-        def t(message):
-            if message.text:
-                v = False
-                bot.send_message(message.chat.id, "V false")
-
-    bot.send_message(message.chat.id, "Saiu loop")
+    # v = "jorge"
+    raise StandardError("test", "500", "VARDEMAR")
+    # val = {f"{v}": "parameter"}
+    bot.send_message(message.chat.id, error)
 
 
 @bot.message_handler(commands=["get_user_agenda"])
